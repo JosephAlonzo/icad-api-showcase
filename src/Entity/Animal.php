@@ -3,65 +3,92 @@
 namespace App\Entity;
 
 use App\Repository\AnimalRepository;
-use Doctrine\DBAL\Types\Types;
+use App\State\AnimalProcessor;
+use ApiPlatform\Metadata\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: AnimalRepository::class)]
+#[ApiResource(
+    normalizationContext: ['groups' => ['animal:read']],
+    denormalizationContext: ['groups' => ['animal:write']],
+    processor: AnimalProcessor::class
+)]
 class Animal
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['animal:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['animal:read', 'animal:write'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['animal:read', 'animal:write'])]
+    private ?string $nomUsage = null;
+
+    #[ORM\Column(length: 255)]
+    #[Groups(['animal:read', 'animal:write'])]
     private ?string $type = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['animal:read', 'animal:write'])]
     private ?string $race = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 255)]
+    #[Groups(['animal:read', 'animal:write'])]
     private ?string $sexe = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $dateNaissance = null;
-
-    #[ORM\Column(length: 100)]
-    private ?string $status = null;
-
-    #[ORM\Column]
-    private ?bool $sterilise = null;
-
-    #[ORM\Column(length: 100)]
-    private ?string $identificationNumber = null;
-
     #[ORM\Column(length: 255)]
+    #[Groups(['animal:read', 'animal:write'])]
     private ?string $poil = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTime $dateIdentification = null;
+    #[ORM\Column(type: 'date')]
+    #[Groups(['animal:read', 'animal:write'])]
+    private ?\DateTimeInterface $dateNaissance = null;
+
+    #[ORM\Column(type: 'date')]
+    #[Groups(['animal:read', 'animal:write'])]
+    private ?\DateTimeInterface $dateIdentification = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['animal:read', 'animal:write'])]
     private ?string $paysNaissance = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['animal:read', 'animal:write'])]
+    private ?string $status = null;
+
+    #[ORM\Column]
+    #[Groups(['animal:read', 'animal:write'])]
+    private ?bool $sterilise = null;
+
+    #[ORM\Column(length: 255)]
+    #[Groups(['animal:read', 'animal:write'])]
     private ?string $categorie = null;
 
     #[ORM\Column]
+    #[Groups(['animal:read', 'animal:write'])]
     private ?bool $livreOrigines = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['animal:read', 'animal:write'])]
     private ?string $signesParticuliers = null;
 
-    #[ORM\ManyToOne(inversedBy: 'animals')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?user $owner = null;
+    #[ORM\Column(length: 15, unique: true)]
+    #[Groups(['animal:read', 'animal:write'])]
+    private ?string $identificationNumber = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'animals')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['animal:read'])]
+    private ?User $owner = null;
+
+    #[ORM\OneToOne(mappedBy: 'animal', cascade: ['persist', 'remove'])]
+    #[Groups(['animal:read'])]
     private ?IdentificationCard $card = null;
 
     public function getId(): ?int
@@ -237,12 +264,12 @@ class Animal
         return $this;
     }
 
-    public function getOwner(): ?user
+    public function getOwner(): ?User
     {
         return $this->owner;
     }
 
-    public function setOwner(?user $owner): static
+    public function setOwner(?User $owner): static
     {
         $this->owner = $owner;
 
@@ -261,4 +288,15 @@ class Animal
         return $this;
     }
 
+
+    public function getNomUsage(): ?string
+    {
+        return $this->nomUsage;
+    }
+
+    public function setNomUsage(string $nomUsage): static
+    {
+        $this->nomUsage = $nomUsage;
+        return $this;
+    }
 }
