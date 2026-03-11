@@ -13,7 +13,7 @@ Unofficial backend implementation for the I-CAD platform (French national pet id
 - PHP 8.2+
 - Symfony 7
 - Doctrine ORM
-- MySQL
+- PostgreSQL
 - Symfony MakerBundle
 
 ## What's inside
@@ -29,7 +29,7 @@ Unofficial backend implementation for the I-CAD platform (French national pet id
 
 - PHP 8.2+
 - Composer
-- MySQL
+- PostgreSQL
 
 ### Install dependencies
 
@@ -46,7 +46,7 @@ cp .env .env.local
 ```
 
 ```env
-DATABASE_URL="mysql://user:password@127.0.0.1:3306/icad"
+DATABASE_URL="postgresql://user:password@127.0.0.1:5432/icad"
 ```
 
 ### Create database & run migrations
