@@ -61,6 +61,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Animal::class, mappedBy: 'owner', orphanRemoval: true)]
     private Collection $animals;
 
+    #[ORM\Column(length: 255)]
+    private ?string $nom = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $Pays = null;
+
     public function __construct()
     {
         $this->animals = new ArrayCollection();
@@ -257,6 +263,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $animal->setOwner(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): static
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getPays(): ?string
+    {
+        return $this->Pays;
+    }
+
+    public function setPays(string $Pays): static
+    {
+        $this->Pays = $Pays;
 
         return $this;
     }
